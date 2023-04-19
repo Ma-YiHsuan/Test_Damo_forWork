@@ -1,26 +1,24 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-</template>
-
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+<script setup>
+import DonutChart from '@/components/DonutChart.vue';
 </script>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<template>
+    <div class="main-wrapper">
+        <div class="wrapper">
+            <DonutChart />
+        </div>
+    </div>
+</template>
+
+<style lang="scss" scoped>
+.main-wrapper {
+    background-color: #f6f7fb;
+    padding: 24px;
+    height: 100vh;
+    .wrapper {
+        background-color: #fff;
+        border-radius: 32px;
+        box-shadow: 80px 120px 100px rgba(99, 86, 158, 0.05);
+    }
 }
 </style>
