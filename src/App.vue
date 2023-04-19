@@ -19,6 +19,7 @@ import DonutChart from '@/components/DonutChart.vue';
         background-color: #fff;
         border-radius: 32px;
         box-shadow: 80px 120px 100px rgba(99, 86, 158, 0.05);
+        padding: 24px;
     }
 }
 </style>
