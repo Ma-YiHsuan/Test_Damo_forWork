@@ -1,19 +1,27 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, toRefs, onBeforeMount, watch } from 'vue';
 import Chart from 'chart.js/auto';
-import { createTypeAnnotationBasedOnTypeof } from '@babel/types';
-
+console.log('::child setup');
 const Donut = ref(null);
-// const config = ref({});
-// const data = ref({});
+const props = defineProps({
+    list: {
+        type: Array,
+        required: true,
+    },
+    labels: {
+        type: Array,
+        required: true,
+    },
+});
+const { labels, list } = toRefs(props);
 const data = {
-    labels: ['process01', 'process02', 'process03', 'process04', 'process05'],
+    labels: labels.value,
     datasets: [
         {
-            data: [108, 147, 116, 83, 94],
+            data: list.value,
             backgroundColor: ['#E3B85B', '#67B0C0', '#5FAF6E', '#1A73E8', '#E44D55'],
             cutout: '60%',
-            borderWidth: 5,
+            borderWidth: 3,
             hoverOffset: 4,
         },
     ],
@@ -25,23 +33,38 @@ const shadow = {
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 10;
         ctx.shadowBlur = 16;
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+        ctx.shadowColor = 'rgba(92, 100, 102, 0.2)';
     },
 };
 const donutOutLabelsLine = {
     id: 'donutOutLabelsLine',
-    afterDraw: (chart) => {
+    beforeDraw: (chart) => {
         const {
             ctx,
             chartArea: { top, bottom, left, right, width, height },
         } = chart;
 
         chart.data.datasets.forEach((dataset, i) => {
-            chart.getDatasetMeta(i).data.forEach((datapoint, index) => {
-                const { x, y } = datapoint.getCenterPoint();
-
-                ctx.fillStyle = 'black';
-                ctx.fillRect(x, y, 5, 5);
+            chart.getDatasetMeta(i).data.forEach((dataPoint, index) => {
+                const { x, y } = dataPoint.getCenterPoint();
+                // draw line
+                const halfWidth = width / 2;
+                const halfHeight = height / 2;
+                const xLine = x >= halfWidth ? x + 35 : x - 35;
+                const yLine = y >= halfHeight ? y + 35 : y - 35;
+                const extraLine = x >= halfWidth ? 120 : -120;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(xLine, yLine);
+                ctx.lineTo(xLine + extraLine, yLine);
+                ctx.strokeStyle = dataset.backgroundColor[index];
+                ctx.stroke();
+                //text
+                const textWidth = ctx.measureText(dataset.data[index] + '次').width;
+                const xPosition = x >= halfWidth ? xLine + extraLine - textWidth : xLine + extraLine;
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillStyle = '#5C6466';
+                ctx.fillText(dataset.data[index] + '次', xPosition, yLine - 5);
             });
         });
     },
@@ -52,18 +75,35 @@ const config = {
     options: {
         maintainAspectRatio: false,
         layout: {
-            padding: 20,
+            padding: 25,
         },
         plugins: {
             legend: {
                 display: false,
             },
+            tooltip: {
+                enabled: false,
+            },
         },
     },
     plugins: [shadow, donutOutLabelsLine],
 };
+onBeforeMount(() => {
+    console.log('::child BeforeMount');
+});
 onMounted(() => {
-    new Chart(Donut.value, config);
+    console.log('::child Mounted');
+    const DonutChart = new Chart(Donut.value, config);
+    watch(labels, (newValue) => {
+        data.labels = newValue;
+        console.log(DonutChart.data);
+        DonutChart.update();
+    });
+    watch(list, (newValue) => {
+        data.datasets[0].data = newValue;
+        console.log('::child watch');
+        DonutChart.update();
+    });
 });
 </script>
 

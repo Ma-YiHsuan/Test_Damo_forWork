@@ -21,3 +21,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# public 中部份的靜態物件代表外來套件，不應該納入 git 版控中，除非有特殊需求要在這邊排除
+public/static/*
