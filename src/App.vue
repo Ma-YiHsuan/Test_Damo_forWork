@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeMount } from 'vue';
-import { apiTaskReminders, apiRemindersProcess } from '@/utils/api.js';
+import { apiRemindersProcess } from '@/utils/api.js';
 import DonutChart from '@/components/DonutChart.vue';
 import BarChart from './components/BarChart.vue';
 console.log('::parent setup');
@@ -13,13 +13,9 @@ reminderProcessData.value = {
     range: 10,
     targetId: 'DEP00000001',
 };
-const reminderData = {
-    comId: 'company',
-    depId: 'dep00000001',
-    startDate: '2022-10-01',
-    endDate: '2023-03-01',
-    range: 15, // 搜回來的資料數量，-1 找全部
-};
+
+const activeKey = ref('1');
+const type = ref('MEM');
 
 const procReminderList = ref([]);
 const procReminderLabels = ref([]);
@@ -57,7 +53,15 @@ onMounted(() => {
             <DonutChart :list="procReminderList" :labels="procReminderLabels" />
         </div>
         <div class="wrapper">
-            <BarChart />
+            <!-- <f-tabs v-model:activeKey="activeKey">
+                <f-tab-pane key="1" tap="人員催辦排名">
+                    <BarChart :list="memList" />
+                </f-tab-pane>
+                <f-tab-pane key="2" tap="部門催辦排名">
+                    <BarChart :list="depList" />
+                </f-tab-pane>
+            </f-tabs> -->
+            <BarChart :type="type" />
         </div>
     </div>
 </template>

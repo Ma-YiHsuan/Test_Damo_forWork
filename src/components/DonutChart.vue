@@ -96,7 +96,6 @@ onMounted(() => {
     const DonutChart = new Chart(Donut.value, config);
     watch(labels, (newValue) => {
         data.labels = newValue;
-        console.log(DonutChart.data);
         DonutChart.update();
     });
     watch(list, (newValue) => {
