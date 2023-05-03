@@ -1,32 +1,29 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, onBeforeMount } from 'vue';
 import { apiTaskReminders } from '@/utils/api.js';
 import Chart from 'chart.js/auto';
-
+console.log('::child setup');
 const Bar = ref(null);
+const tooltipBox = ref(null);
 const props = defineProps({
     type: {
         type: String,
         required: true,
     },
+    reminderData: {
+        type: Object,
+        required: true,
+    },
 });
+const memList = ref([]);
+const depList = ref([]);
 
-const reminderData = {
-    comId: 'company',
-    depId: 'dep00000001',
-    startDate: '2022-10-01',
-    endDate: '2023-03-01',
-    range: 15,
-};
-
-// new Chart
-onMounted(async () => {
-    const memList = ref([]);
-    const depList = ref([]);
+async function getReminders() {
     try {
-        const res = await apiTaskReminders(JSON.stringify(reminderData));
+        const res = await apiTaskReminders(JSON.stringify(props.reminderData));
         if (res.data.msg === 'success') {
             if ('remindersInfo' in res.data.data) {
+                console.log('::child api');
                 memList.value = res.data.data.remindersInfo.memList;
                 depList.value = res.data.data.remindersInfo.depList;
                 memList.value.sort((a, b) => {
@@ -43,12 +40,23 @@ onMounted(async () => {
     } catch (err) {
         console.error(err);
     }
+}
+
+onBeforeMount(() => {
+    console.log('::child BeforeMount');
+});
+
+// new Chart
+onMounted(async () => {
+    await getReminders();
+    console.log('::child mounted');
     const nameLabels = computed(() => {
         if (props.type === 'MEM') {
             return memList.value.map((mem) => mem.name);
         } else if (props.type === 'DEP') {
             return depList.value.map((dep) => dep.name);
         }
+        return [];
     });
     const numData = computed(() => {
         if (props.type === 'MEM') {
@@ -56,7 +64,9 @@ onMounted(async () => {
         } else if (props.type === 'DEP') {
             return depList.value.map((dep) => dep.number);
         }
+        return [];
     });
+    //Chart data
     const data = {
         labels: nameLabels.value,
         datasets: [
@@ -68,6 +78,7 @@ onMounted(async () => {
             },
         ],
     };
+    //數值顯示在 Bar 上方
     const topLabels = {
         id: 'topLabels',
         afterDatasetsDraw: (chart) => {
@@ -84,6 +95,7 @@ onMounted(async () => {
             });
         },
     };
+    //名字上方顯示紫色的排名
     const ticksOfRank = {
         id: 'ticksOfRank',
         afterDraw: (chart) => {
@@ -99,6 +111,7 @@ onMounted(async () => {
             });
         },
     };
+    // chart config
     const config = {
         type: 'bar',
         data: data,
@@ -143,34 +156,61 @@ onMounted(async () => {
                     display: false,
                 },
                 tooltip: {
-                    yAlign: 'bottom',
-                    displayColors: false,
-                    titleMarginBottom: 0,
-                    cornerRadius: 0,
-                    callbacks: {
-                        label: function (context) {
-                            return '';
-                        },
-                    },
+                    enabled: false,
                 },
+            },
+            onResize: (chart) => {
+                if (chart.scales.x) {
+                    const ticksHeight = chart.scales.x.height - 10 + 'px';
+                    const ticksWidth = chart.scales.x.width + 'px';
+                    const ticksLeft = chart.scales.x.left + 'px';
+                    tooltipBox.value.style.setProperty('--height', ticksHeight);
+                    tooltipBox.value.style.setProperty('--width', ticksWidth);
+                    tooltipBox.value.style.setProperty('--left', ticksLeft);
+                    tooltipBox.value.style.setProperty('--amount', numData.value.length);
+                }
             },
         },
         plugins: [topLabels, ticksOfRank],
     };
-    new Chart(Bar.value, config);
+    const BarChart = new Chart(Bar.value, config);
+    BarChart.config.options.onResize(BarChart);
 });
 </script>
 
 <template>
     <!-- Bar Chart -->
-    <div class="chart-view">
-        <canvas ref="Bar"></canvas>
+    <div class="bar-wrapper">
+        <div class="tooltip-box" ref="tooltipBox">
+            <div v-show="props.type === 'MEM'" v-for="(item, index) of memList" :key="item.id" class="tooltip-item" :content="item.name" v-tippy></div>
+            <div v-show="props.type === 'DEP'" v-for="(item, index) of depList" :key="item.id" class="tooltip-item" :content="item.name" v-tippy></div>
+        </div>
+        <div class="chart-view">
+            <canvas ref="Bar"></canvas>
+        </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-.chart-view {
-    width: 100%;
-    height: 484px;
+.bar-wrapper {
+    position: relative;
+    .tooltip-box {
+        position: absolute;
+        height: var(--height);
+        width: var(--width);
+        left: var(--left);
+        bottom: 6px;
+        .tooltip-item {
+            display: inline-block;
+            height: var(--height);
+            width: calc(var(--width) / var(--amount));
+            // background-color: teal;
+            // opacity: 0.3;
+        }
+    }
+    .chart-view {
+        width: 100%;
+        height: 484px;
+    }
 }
 </style>

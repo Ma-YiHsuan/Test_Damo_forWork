@@ -13,9 +13,14 @@ reminderProcessData.value = {
     range: 10,
     targetId: 'DEP00000001',
 };
-
+const reminderData = {
+    comId: 'company',
+    depId: 'dep00000001',
+    startDate: '2022-10-01',
+    endDate: '2023-03-01',
+    range: 15,
+};
 const activeKey = ref('1');
-const type = ref('MEM');
 
 const procReminderList = ref([]);
 const procReminderLabels = ref([]);
@@ -53,15 +58,14 @@ onMounted(() => {
             <DonutChart :list="procReminderList" :labels="procReminderLabels" />
         </div>
         <div class="wrapper">
-            <!-- <f-tabs v-model:activeKey="activeKey">
-                <f-tab-pane key="1" tap="人員催辦排名">
-                    <BarChart :list="memList" />
+            <f-tabs v-model:activeKey="activeKey">
+                <f-tab-pane key="1" tab="人員催辦排名">
+                    <BarChart :type="'MEM'" :reminder-data="reminderData" />
                 </f-tab-pane>
-                <f-tab-pane key="2" tap="部門催辦排名">
-                    <BarChart :list="depList" />
+                <f-tab-pane key="2" tab="部門催辦排名">
+                    <BarChart :type="'DEP'" :reminder-data="reminderData" />
                 </f-tab-pane>
-            </f-tabs> -->
-            <BarChart :type="type" />
+            </f-tabs>
         </div>
     </div>
 </template>

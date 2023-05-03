@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, toRefs, onBeforeMount, watch } from 'vue';
 import Chart from 'chart.js/auto';
-console.log('::child setup');
+// console.log('::child setup');
 const Donut = ref(null);
 const props = defineProps({
     list: {
@@ -88,11 +88,10 @@ const config = {
     },
     plugins: [shadow, donutOutLabelsLine],
 };
-onBeforeMount(() => {
-    console.log('::child BeforeMount');
-});
+// onBeforeMount(() => {
+//     console.log('::child BeforeMount');
+// });
 onMounted(() => {
-    console.log('::child Mounted');
     const DonutChart = new Chart(Donut.value, config);
     watch(labels, (newValue) => {
         data.labels = newValue;
@@ -100,7 +99,7 @@ onMounted(() => {
     });
     watch(list, (newValue) => {
         data.datasets[0].data = newValue;
-        console.log('::child watch');
+        // console.log('::child watch');
         DonutChart.update();
     });
 });
