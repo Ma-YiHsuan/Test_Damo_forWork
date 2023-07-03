@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeMount } from 'vue';
 import { apiRemindersProcess } from '@/utils/api.js';
 import DonutChart from '@/components/DonutChart.vue';
 import BarChart from './components/BarChart.vue';
-console.log('::parent setup');
+
 const reminderProcessData = ref({});
 reminderProcessData.value = {
     comId: '',
@@ -20,7 +20,6 @@ const reminderData = {
     endDate: '2023-03-01',
     range: 15,
 };
-const activeKey = ref('1');
 
 const procReminderList = ref([]);
 const procReminderLabels = ref([]);
@@ -42,13 +41,6 @@ apiRemindersProcess(JSON.stringify(reminderProcessData.value))
         }
     })
     .catch((err) => console.error(err));
-
-onBeforeMount(() => {
-    console.log('::parent BeforeMount');
-});
-onMounted(() => {
-    console.log('::parent Mounted');
-});
 </script>
 
 <template>
@@ -57,15 +49,7 @@ onMounted(() => {
             <DonutChart :list="procReminderList" :labels="procReminderLabels" />
         </div>
         <div class="wrapper">
-            <BarChart :type="'MEM'" :reminder-data="reminderData" />
-            <!-- <f-tabs v-model:activeKey="activeKey">
-                <f-tab-pane key="1" tab="人員催辦排名">
-                    <BarChart :type="'MEM'" :reminder-data="reminderData" />
-                </f-tab-pane>
-                <f-tab-pane key="2" tab="部門催辦排名">
-                    <BarChart :type="'DEP'" :reminder-data="reminderData" />
-                </f-tab-pane>
-            </f-tabs> -->
+            <BarChart :reminder-data="reminderData" />
         </div>
     </div>
 </template>

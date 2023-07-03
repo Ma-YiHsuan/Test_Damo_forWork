@@ -11,7 +11,7 @@
         "axios": "^1.3.5",
         "chart.js": "^4.2.1",
         "core-js": "^3.8.3",
-        "flowring-ui": "git+ssh://git@gitlab.flowring.com/pd2/flowringui.git#feat/theme-refactor",
+        "echarts": "^5.4.2",
         "vue": "^3.2.13"
     },
     "devDependencies": {
