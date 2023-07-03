@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseHost = 'http://192.168.6.200:3000'; // Mockoon
+const baseHost = 'http://192.168.6.69:3000'; // Mockoon
 const headersConfig = {
     'Content-Type': 'application/json',
 };

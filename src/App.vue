@@ -52,20 +52,20 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>Test Demo 數字 123</div>
     <div class="main-wrapper">
         <div class="wrapper">
             <DonutChart :list="procReminderList" :labels="procReminderLabels" />
         </div>
         <div class="wrapper">
-            <f-tabs v-model:activeKey="activeKey">
+            <BarChart :type="'MEM'" :reminder-data="reminderData" />
+            <!-- <f-tabs v-model:activeKey="activeKey">
                 <f-tab-pane key="1" tab="人員催辦排名">
                     <BarChart :type="'MEM'" :reminder-data="reminderData" />
                 </f-tab-pane>
                 <f-tab-pane key="2" tab="部門催辦排名">
                     <BarChart :type="'DEP'" :reminder-data="reminderData" />
                 </f-tab-pane>
-            </f-tabs>
+            </f-tabs> -->
         </div>
     </div>
 </template>
