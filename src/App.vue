@@ -27,7 +27,7 @@ const procReminderLabels = ref([]);
 apiRemindersProcess(JSON.stringify(reminderProcessData.value))
     .then((res) => {
         if (res.data.msg === 'success') {
-            console.log('::parent api then');
+            console.log('::parent api');
             const processList = res.data.data.processList;
             if (processList.length !== 0) {
                 processList.sort((a, b) => {
@@ -43,9 +43,6 @@ apiRemindersProcess(JSON.stringify(reminderProcessData.value))
     })
     .catch((err) => console.error(err));
 
-onBeforeMount(() => {
-    console.log('::parent BeforeMount');
-});
 onMounted(() => {
     console.log('::parent Mounted');
 });
@@ -58,14 +55,6 @@ onMounted(() => {
         </div>
         <div class="wrapper">
             <BarChart :type="'MEM'" :reminder-data="reminderData" />
-            <!-- <f-tabs v-model:activeKey="activeKey">
-                <f-tab-pane key="1" tab="人員催辦排名">
-                    <BarChart :type="'MEM'" :reminder-data="reminderData" />
-                </f-tab-pane>
-                <f-tab-pane key="2" tab="部門催辦排名">
-                    <BarChart :type="'DEP'" :reminder-data="reminderData" />
-                </f-tab-pane>
-            </f-tabs> -->
         </div>
     </div>
 </template>

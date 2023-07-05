@@ -15,8 +15,6 @@ const props = defineProps({
         required: true,
     },
 });
-const memList = ref([]);
-const depList = ref([]);
 
 // async function getReminders() {
 //     try {
@@ -159,32 +157,17 @@ onMounted(async () => {
                     enabled: false,
                 },
             },
-            // onResize: (chart) => {
-            //     if (chart.scales.x) {
-            //         const ticksHeight = chart.scales.x.height - 10 + 'px';
-            //         const ticksWidth = chart.scales.x.width + 'px';
-            //         const ticksLeft = chart.scales.x.left + 'px';
-            //         tooltipBox.value.style.setProperty('--height', ticksHeight);
-            //         tooltipBox.value.style.setProperty('--width', ticksWidth);
-            //         tooltipBox.value.style.setProperty('--left', ticksLeft);
-            //         tooltipBox.value.style.setProperty('--amount', numData.value.length);
-            //     }
-            // },
         },
         plugins: [topLabels, ticksOfRank],
     };
     const BarChart = new Chart(Bar.value, config);
-    // BarChart.config.options.onResize(BarChart);
+    console.log('BarChart::', BarChart);
 });
 </script>
 
 <template>
     <!-- Bar Chart -->
     <div class="bar-wrapper">
-        <!-- <div class="tooltip-box" ref="tooltipBox">
-            <div v-show="props.type === 'MEM'" v-for="(item, index) of memList" :key="item.id" class="tooltip-item" :content="item.name" v-tippy></div>
-            <div v-show="props.type === 'DEP'" v-for="(item, index) of depList" :key="item.id" class="tooltip-item" :content="item.name" v-tippy></div>
-        </div> -->
         <div class="chart-view">
             <canvas ref="Bar"></canvas>
         </div>
